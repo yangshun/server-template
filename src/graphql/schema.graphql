@@ -1,0 +1,89 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type CaughtPokemon implements Node {
+  caughtAt: String!
+  id: ID!
+  nickname: String
+  pokemon: Pokemon
+  shiny: Boolean!
+  stats: String!
+  user: User
+}
+
+type Mutation {
+  updateDisplayName(displayName: String!): User @requiresAuth(role: "User")
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type Pokemon implements Node {
+  id: ID!
+  name: String!
+  primaryType: String!
+  secondaryType: String
+}
+
+type Query {
+  findUsers(after: String, before: String, first: Int, last: Int, name: String!): QueryFindUsersConnection @requiresAuth(role: "User")
+  node(id: ID!): Node
+  pokemon(id: String!): Pokemon @requiresAuth(role: "User")
+  user(username: String!): User @requiresAuth(role: "User")
+  viewer: User
+}
+
+type QueryFindUsersConnection {
+  edges: [QueryFindUsersConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type QueryFindUsersConnectionEdge {
+  cursor: String!
+  node: User
+}
+
+enum Role {
+  Admin
+  User
+}
+
+type User implements Node {
+  access: Role @self
+  caughtPokemon(after: String, before: String, first: Int, last: Int): UserCaughtPokemonConnection!
+  displayName: String!
+  email: String @self
+  id: ID!
+  locale: String @self
+  username: String!
+}
+
+type UserCaughtPokemonConnection {
+  edges: [UserCaughtPokemonConnectionEdge]
+  pageInfo: PageInfo!
+}
+
+type UserCaughtPokemonConnectionEdge {
+  cursor: String!
+  node: CaughtPokemon
+}
+
+type UserConnection {
+  edges: [UserEdge]
+  pageInfo: PageInfo!
+}
+
+type UserEdge {
+  cursor: String!
+  node: User
+}

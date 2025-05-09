@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client"
+  binaryTargets = ["native", "linux-musl"]
+  output        = "./prisma-client"
+}
+
+generator pothos {
+  provider     = "prisma-pothos-types"
+  clientOutput = "./prisma-client"
+  output       = "./pothos-types.ts"
+}
+
+generator json {
+  provider     = "prisma-json-types-generator"
+  clientOutput = "./prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  Admin
+  User
+}
+
+model User {
+  id            String          @unique @default(uuid(7))
+  access        Role            @default(User)
+  created       DateTime        @default(now())
+  displayName   String
+  email         String          @unique
+  locale        String          @default("en_US")
+  password      String
+  salt          String
+  suspended     Boolean         @default(false)
+  username      String          @unique
+  CaughtPokemon CaughtPokemon[]
+
+  @@index([id(sort: Asc)])
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+model Pokemon {
+  id            Int             @id @default(autoincrement())
+  CaughtPokemon CaughtPokemon[]
+  name          String          @unique
+  primaryType   String
+  secondaryType String?
+
+  @@index([id(sort: Asc)])
+}
+
+model CaughtPokemon {
+  id        String   @id @default(uuid(7))
+  caughtAt  DateTime @default(now())
+  nickname  String?
+  pokemon   Pokemon  @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+  pokemonId Int
+  shiny     Boolean
+  /// [PokemonStats]
+  stats     Json
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@index([userId])
+  @@index([pokemonId])
+}

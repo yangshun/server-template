@@ -1,0 +1,3 @@
+coverage/
+pnpm-lock.yaml
+src/graphql/schema.graphql
