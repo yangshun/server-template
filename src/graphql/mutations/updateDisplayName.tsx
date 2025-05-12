@@ -7,8 +7,8 @@ builder.mutationField('updateDisplayName', (t) =>
     args: {
       displayName: t.arg.string({ required: true }),
     },
-    directives: {
-      requiresAuth: { role: 'User' },
+    authScopes: {
+      role: 'User',
     },
     resolve: async (query, _, { displayName }, { sessionUser }) => {
       const user =
