@@ -48,7 +48,7 @@
     "glob": "^11.0.2",
     "nodemon": "^3.1.10",
     "npm-run-all2": "^8.0.1",
-    "prettier": "^4.0.0-alpha.12",
+    "prettier": "4.0.0-alpha.12",
     "prisma": "^6.7.0",
     "prisma-json-types-generator": "^3.4.1",
     "ts-node": "^10.9.2",
