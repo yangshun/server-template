@@ -1,5 +1,5 @@
 {
-  "name": "@nkzw/prisma-pothos-graphql-server",
+  "name": "@nkzw/server-template",
   "version": "0.0.1",
   "author": "Christoph Nakazawa <christoph.pojer@gmail.com>",
   "repository": {
