@@ -5,7 +5,7 @@ import parseInteger from '@nkzw/core/parseInteger.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { createYoga } from 'graphql-yoga';
+import { createYoga, YogaInitialContext } from 'graphql-yoga';
 import schema from './graphql/schema.tsx';
 import { getClientDomain, setClientDomain } from './lib/ClientDomain.tsx';
 import env from './lib/env.tsx';
@@ -84,10 +84,17 @@ app.use(
   },
 );
 
-const yoga = createYoga({
+type YogaContext = Readonly<
+  YogaInitialContext & {
+    req: express.Request & {
+      user?: SessionUser;
+    };
+  }
+>;
+
+const yoga = createYoga<YogaContext>({
   context: (request) => ({
-    sessionUser: (request as unknown as { req: { user: SessionUser } }).req
-      .user,
+    sessionUser: request.req.user,
   }),
   graphiql: process.env.NODE_ENV === 'development',
   schema,
