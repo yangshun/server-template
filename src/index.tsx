@@ -98,20 +98,7 @@ const yoga = createYoga<
   schema,
 });
 
-app.use('/graphql', async (req, res, next) => {
-  try {
-    return await yoga(req, res);
-  } catch (error) {
-    const user = req.user as SessionUser | undefined;
-    console.log(
-      `${styleText(['red', 'bold'], 'GraphQL Error')}${
-        user ? ` › User '${user.username}' (id '${user.id}')` : ''
-      }\n`,
-      error,
-    );
-    next(error);
-  }
-});
+app.use('/graphql', (req, res) => yoga(req, res));
 
 app.all('/{*splat}', (_, res) => {
   res.redirect(domain);
