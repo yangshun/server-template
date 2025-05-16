@@ -12,7 +12,7 @@ This is a template for a Node.js GraphQL server using Prisma and Pothos includin
 - [Pothos](https://pothos-graphql.dev/) as the GraphQL schema builder.
 - [`prisma-json-types-generator`](https://github.com/arthurfiorette/prisma-json-types-generator) for type-safe JSON types from the database all the way to the client.
 - [`graphql-yoga`](https://the-guild.dev/graphql/yoga-server)
-- [Express.js](https://expressjs.com/)
+- [Hono](https://hono.dev/)
 - [Better Auth](https://better-auth.com/) for Authentication.
 - [pnpm](https://pnpm.io/)
 
@@ -259,7 +259,3 @@ This template is designed to be used with [Relay](https://relay.dev/) as the cli
 ## Why does this template use `.tsx` as a file extension?
 
 _You can use `.ts` if you prefer!_ This template uses `.tsx` because it is commonly used in monorepos alongside React projects. You might also choose to use JSX in your server code. Whenever you start out using a `.ts` file and decide to use JSX, you have to rename the file. Blaming the file history then becomes cumbersome. It's also confusing to use two different extensions for TypeScript and the legacy casting syntax supported by `.ts` is not useful. There is no upside to using `.ts` as an extension
-
-## Why does this template use Express.js?
-
-Express.js is still the most widely used and best supported framework in the Node.js ecosystem. It is extremely stable, and has the largest ecosystem built around it. There are many modern HTTP server frameworks, and if you like one of them, feel free to swap out Express.js (_and send a Pull Request!_).
