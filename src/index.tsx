@@ -1,12 +1,10 @@
 #!/usr/bin/env NODE_ENV=development node_modules/.bin/nodemon -q -I --exec node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env
-import { createServer } from 'node:http';
 import { parseArgs, styleText } from 'node:util';
+import { serve } from '@hono/node-server';
 import parseInteger from '@nkzw/core/parseInteger.js';
-import { fromNodeHeaders, toNodeHandler } from 'better-auth/node';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import express from 'express';
 import { createYoga } from 'graphql-yoga';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import schema from './graphql/schema.tsx';
 import { auth } from './lib/auth.tsx';
 import env from './lib/env.tsx';
@@ -37,23 +35,9 @@ const {
   },
 });
 
-const domain = env('CLIENT_DOMAIN');
+const origin = env('CLIENT_DOMAIN');
 const port = (portArg && parseInteger(portArg)) || 9000;
-
-const origin = (
-  origin: unknown,
-  callback: (error: Error | null, allowed?: boolean) => void,
-) => {
-  if (process.env.NODE_ENV === 'development' || !origin || origin === domain) {
-    callback(null, true);
-  } else {
-    callback(new Error(`Invalid origin '${origin}'.`));
-  }
-};
-const app = express();
-const httpServer = createServer(app);
-
-app.disable('x-powered-by');
+const app = new Hono();
 
 app.use(
   cors({
@@ -62,39 +46,44 @@ app.use(
   }),
 );
 
-app.all('/api/auth/{*any}', toNodeHandler(auth));
-
-app.use((req, res, next) => bodyParser.json({ strict: false })(req, res, next));
+app.on(['POST', 'GET'], '/api/auth/*', ({ req }) => auth.handler(req.raw));
 
 const yoga = createYoga<
   Readonly<{
-    req: express.Request & {
-      user?: SessionUser;
-    };
+    sessionUser: SessionUser | null;
   }>
 >({
-  context: async ({ req }) => {
-    const user = (
-      await auth.api.getSession({
-        headers: fromNodeHeaders(req.headers),
-      })
-    )?.user;
-
-    return {
-      sessionUser: user ? toSessionUser(user) : null,
-    };
-  },
   graphiql: process.env.NODE_ENV === 'development',
   schema,
 });
 
-app.use('/graphql', (req, res) => yoga(req, res));
+app.on(['POST', 'GET', 'OPTIONS'], '/graphql/*', async (context) => {
+  let req = context.req.raw;
+  const accept = context.req.header('accept');
+  const user = (
+    await auth.api.getSession({
+      headers: req.headers,
+    })
+  )?.user;
 
-app.all('/{*splat}', (_, res) => {
-  res.redirect(domain);
+  if (
+    accept &&
+    !accept.includes('application/json') &&
+    accept.includes('text/event-stream')
+  ) {
+    if (context.req.path === '/graphql' || context.req.path === '/graphql/') {
+      req = new Request(req.url.replace('/graphql', '/graphql/stream'), req);
+    }
+  }
+
+  return yoga.handleRequest(req, {
+    sessionUser: user ? toSessionUser(user) : null,
+  });
 });
 
-httpServer.listen(port, () =>
+app.all('/*', (context) => context.redirect(origin));
+
+serve({ fetch: app.fetch, port }, () =>
   console.log(
     `${styleText(['green', 'bold'], `${name}\n  ➜`)}  Server running on port ${styleText('bold', String(port))}.\n`,
   ),
