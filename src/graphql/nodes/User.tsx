@@ -1,12 +1,7 @@
-import { Role } from '../../prisma/prisma-client/client.ts';
 import prisma from '../../prisma/prisma.tsx';
 import builder from '../builder.tsx';
 import decodeIDOrThrow from '../lib/decodeIDOrThrow.tsx';
 import encodeGlobalID from '../lib/encodeGlobalID.tsx';
-
-const RoleEnum = builder.enumType(Role, {
-  name: 'Role',
-});
 
 export const encodeUserID = (id: string) => encodeGlobalID('User', id);
 export const decodeUserID = (id: string) => decodeIDOrThrow('User', id);
@@ -15,11 +10,6 @@ const MAX_RESULTS = 10;
 
 const User = builder.prismaNode('User', {
   fields: (t) => ({
-    access: t.field({
-      authScopes: (user) => ({ self: user.id }),
-      resolve: ({ access }) => access,
-      type: RoleEnum,
-    }),
     caughtPokemon: t.relatedConnection('CaughtPokemon', {
       cursor: 'id',
       nullable: false,
@@ -27,7 +17,6 @@ const User = builder.prismaNode('User', {
         orderBy: { caughtAt: 'asc' },
       },
     }),
-    displayName: t.exposeString('displayName', { nullable: false }),
     email: t.string({
       authScopes: (user) => ({ self: user.id }),
       resolve: ({ email }) => email,
@@ -36,7 +25,12 @@ const User = builder.prismaNode('User', {
       authScopes: (user) => ({ self: user.id }),
       resolve: ({ locale }) => locale,
     }),
-    username: t.exposeString('username', { nullable: false }),
+    name: t.exposeString('name', { nullable: false }),
+    role: t.string({
+      authScopes: (user) => ({ self: user.id }),
+      resolve: ({ role }) => role,
+    }),
+    username: t.exposeString('username'),
   }),
   id: { field: 'id' },
 });
@@ -71,7 +65,7 @@ builder.queryFields((t) => ({
                     },
                   },
                   {
-                    displayName: {
+                    name: {
                       mode: 'insensitive',
                       startsWith: name,
                     },

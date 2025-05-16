@@ -2,16 +2,16 @@
 import { createServer } from 'node:http';
 import { parseArgs, styleText } from 'node:util';
 import parseInteger from '@nkzw/core/parseInteger.js';
+import { fromNodeHeaders, toNodeHandler } from 'better-auth/node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { createYoga } from 'graphql-yoga';
 import schema from './graphql/schema.tsx';
-import { getClientDomain, setClientDomain } from './lib/ClientDomain.tsx';
+import { auth } from './lib/auth.tsx';
 import env from './lib/env.tsx';
 import prisma from './prisma/prisma.tsx';
-import installAuthMiddleware from './user/installAuthMiddleware.tsx';
-import { SessionUser } from './user/SessionUser.tsx';
+import { SessionUser, toSessionUser } from './user/SessionUser.tsx';
 
 try {
   await prisma.$connect();
@@ -37,12 +37,8 @@ const {
   },
 });
 
-if (process.env.NODE_ENV === 'development') {
-  setClientDomain(env('DEVELOPMENT_DOMAIN'));
-}
-
+const domain = env('CLIENT_DOMAIN');
 const port = (portArg && parseInteger(portArg)) || 9000;
-const domain = getClientDomain();
 
 const origin = (
   origin: unknown,
@@ -59,8 +55,6 @@ const httpServer = createServer(app);
 
 app.disable('x-powered-by');
 
-app.use((req, res, next) => bodyParser.json({ strict: false })(req, res, next));
-
 app.use(
   cors({
     credentials: true,
@@ -68,21 +62,9 @@ app.use(
   }),
 );
 
-// `installAuthMiddleware` must be called after `cors` but before the authentication handler.
-installAuthMiddleware(app);
+app.all('/api/auth/{*any}', toNodeHandler(auth));
 
-app.use(
-  (error: Error, _: express.Request, res: express.Response, next: unknown) => {
-    if (error.name === 'AuthenticationError') {
-      res.json({
-        message: error.message || 'authentication-error',
-      });
-      return;
-    }
-    res.json({ code: 2, message: 'An error occurred.' });
-    console.log(error);
-  },
-);
+app.use((req, res, next) => bodyParser.json({ strict: false })(req, res, next));
 
 const yoga = createYoga<
   Readonly<{
@@ -91,9 +73,17 @@ const yoga = createYoga<
     };
   }>
 >({
-  context: (request) => ({
-    sessionUser: request.req.user,
-  }),
+  context: async ({ req }) => {
+    const user = (
+      await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+      })
+    )?.user;
+
+    return {
+      sessionUser: user ? toSessionUser(user) : null,
+    };
+  },
   graphiql: process.env.NODE_ENV === 'development',
   schema,
 });

@@ -13,7 +13,7 @@ This is a template for a Node.js GraphQL server using Prisma and Pothos includin
 - [`prisma-json-types-generator`](https://github.com/arthurfiorette/prisma-json-types-generator) for type-safe JSON types from the database all the way to the client.
 - [`graphql-yoga`](https://the-guild.dev/graphql/yoga-server)
 - [Express.js](https://expressjs.com/)
-- [Passport.js](https://www.passportjs.org/) for Authentication
+- [Better Auth](https://better-auth.com/) for Authentication.
 - [pnpm](https://pnpm.io/)
 
 ## Setup
@@ -30,7 +30,7 @@ You'll need Node.js 23+ and pnpm 10+ to use this template.
 
 ```js
 await (
-  await fetch('/user/login', {
+  await fetch('/api/auth/sign-in/email', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -76,16 +76,16 @@ First, we define our [Prisma schema](https://github.com/nkzw-tech/server-templat
 ```prisma
 model User {
   id            String          @unique @default(uuid(7))
-  access        Role            @default(User)
   created       DateTime        @default(now())
-  displayName   String
   email         String          @unique
   locale        String          @default("en_US")
+  name          String
   password      String
-  salt          String
-  suspended     Boolean         @default(false)
+  role          String          @default("user")
   username      String          @unique
   CaughtPokemon CaughtPokemon[]
+
+  […]
 
   @@index([id(sort: Asc)])
 }
@@ -244,9 +244,9 @@ _Note: There is no validation and no actual guarantee that the data from the dat
 
 ### Authentication
 
-Authentication is handled using [`passport`](https://github.com/jaredhanson/passport). This template uses the `local` strategy and stores users in the database. You can add other strategies like `google`, `github`, etc. by following the [passport documentation](http://www.passportjs.org/packages/).
+Authentication is handled using [Better Auth](https://better-auth.com). This template only supports the email/password authentication flow. You can add other authentication methods like OAuth2, SSO, etc. by reading the [Better Auth documentation](https://better-auth.com/docs/).
 
-You need to build your own authentication flow in your client that authenticates against the non-GraphQL endpoints like `/user/login`, `/user/logout`, and `/user/register`. See [`installAuthMiddleware.tsx`](https://github.com/nkzw-tech/server-template/blob/main/src/user/installAuthMiddleware.tsx). Check out the [`src/user/`](https://github.com/nkzw-tech/server-template/tree/main/src/user) folder where you can change all authentication related code based on your requirements.
+You need to build your own authentication flow in your client using [Better Auth's client](https://www.better-auth.com/docs/concepts/client).
 
 ### Security
 

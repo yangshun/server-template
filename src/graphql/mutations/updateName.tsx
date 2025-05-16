@@ -1,16 +1,16 @@
+import { auth } from '../../lib/auth.tsx';
 import prisma from '../../prisma/prisma.tsx';
-import isValidName from '../../user/isValidName.tsx';
 import builder from '../builder.tsx';
 
-builder.mutationField('updateDisplayName', (t) =>
+builder.mutationField('updateName', (t) =>
   t.prismaField({
     args: {
-      displayName: t.arg.string({ required: true }),
+      name: t.arg.string({ required: true }),
     },
     authScopes: {
       role: 'User',
     },
-    resolve: async (query, _, { displayName }, { sessionUser }) => {
+    resolve: async (query, _, { name }, { sessionUser }) => {
       const user =
         sessionUser &&
         (await prisma.user.findUniqueOrThrow({
@@ -19,20 +19,18 @@ builder.mutationField('updateDisplayName', (t) =>
           },
         }));
 
-      displayName = displayName.trim();
+      name = name.trim();
 
-      if (
-        displayName.length < 2 ||
-        displayName.length > 32 ||
-        !isValidName(displayName.replaceAll(' ', '-'))
-      ) {
+      if (name.length < 2 || name.length > 32) {
         throw new Error('invalid-display-name');
       }
+
+      await auth.api.updateUser({ body: { name } });
 
       return await prisma.user.update({
         ...query,
         data: {
-          displayName,
+          name,
         },
         where: {
           id: user.id,

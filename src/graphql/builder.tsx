@@ -5,7 +5,6 @@ import PrismaPlugin from '@pothos/plugin-prisma';
 import RelayPlugin from '@pothos/plugin-relay';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import PrismaTypes from '../prisma/pothos-types.ts';
-import { Role } from '../prisma/prisma-client/client.ts';
 import prisma from '../prisma/prisma.tsx';
 import isAdmin from '../user/isAdmin.tsx';
 import { Context } from './context.tsx';
@@ -15,7 +14,7 @@ import encodeGlobalID from './lib/encodeGlobalID.tsx';
 
 interface PothosTypes extends Partial<PothosSchemaTypes.UserSchemaTypes> {
   AuthScopes: {
-    role: Role;
+    role: string;
     self: string;
   };
   Context: Context;
@@ -60,7 +59,7 @@ const builder = new SchemaBuilder<PothosTypes>({
   scopeAuth: {
     authScopes: (context) => ({
       role: (role) =>
-        role === context.sessionUser.access || isAdmin(context.sessionUser),
+        role === context.sessionUser.role || isAdmin(context.sessionUser),
       self: (id) => id === context.sessionUser.id,
     }),
   },

@@ -2,26 +2,23 @@
 import { styleText } from 'node:util';
 import random from '@nkzw/core/random.js';
 import arrayShuffle from 'array-shuffle';
-import generateSalt from '../user/generateSalt.tsx';
-import { hashPassword } from '../user/hashPassword.tsx';
+import { auth } from '../lib/auth.tsx';
 import { PrismaClient } from './prisma-client/client.ts';
 
 const prisma = new PrismaClient();
 
 const users = new Set([
   {
-    access: 'Admin',
-    displayName: 'Admin',
     email: 'admin@nakazawa.dev',
+    name: 'Admin',
     password: 'not-a-secure-password',
-    salt: generateSalt(),
+    role: 'admin',
     username: 'admin',
   },
   {
-    displayName: 'First User',
     email: 'first-user@nakazawa.dev',
+    name: 'First User',
     password: 'not-a-secure-password-either',
-    salt: generateSalt(),
     username: 'first-user',
   },
 ] as const);
@@ -60,16 +57,11 @@ try {
   console.log(styleText('bold', `Creating users`));
 
   for (const data of users) {
-    const user = await prisma.user.create({
-      data: {
-        ...data,
-        password: (await hashPassword(data.password, data.salt)).toString(
-          'hex',
-        ),
-      },
+    const { user } = await auth.api.createUser({
+      body: data,
     });
 
-    console.log(`  Created user ${styleText('blue', user.displayName)}.`);
+    console.log(`  Created user ${styleText('blue', user.name)}.`);
   }
 
   console.log(styleText('bold', `Inserting Pokémon`));

@@ -14,7 +14,7 @@ type CaughtPokemon implements Node {
 }
 
 type Mutation {
-  updateDisplayName(displayName: String!): User @auth(role: "User")
+  updateName(name: String!): User @auth(role: "User")
 }
 
 interface Node {
@@ -53,19 +53,14 @@ type QueryFindUsersConnectionEdge {
   node: User
 }
 
-enum Role {
-  Admin
-  User
-}
-
 type User implements Node {
-  access: Role @auth(self: true)
   caughtPokemon(after: String, before: String, first: Int, last: Int): UserCaughtPokemonConnection!
-  displayName: String!
   email: String @auth(self: true)
   id: ID!
   locale: String @auth(self: true)
-  username: String!
+  name: String!
+  role: String @auth(self: true)
+  username: String
 }
 
 type UserCaughtPokemonConnection {
