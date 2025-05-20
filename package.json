@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@graphql-tools/utils": "^10.8.6",
-    "@hono/node-server": "^1.14.1",
+    "@hono/node-server": "^1.14.2",
     "@nkzw/core": "^1.2.1",
     "@nkzw/define-env": "^1.1.0",
     "@pothos/core": "^4.6.2",
@@ -27,13 +27,13 @@
     "better-auth": "^1.2.8",
     "graphql": "^16.11.0",
     "graphql-yoga": "^5.13.4",
-    "hono": "^4.7.9"
+    "hono": "^4.7.10"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
     "@nkzw/eslint-config": "^2.4.0",
     "@swc/core": "^1.11.24",
-    "@types/node": "^22.15.18",
+    "@types/node": "^22.15.19",
     "eslint": "^9.27.0",
     "glob": "^11.0.2",
     "nodemon": "^3.1.10",
@@ -43,7 +43,7 @@
     "prisma-json-types-generator": "^3.4.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.3"
+    "vitest": "^3.1.4"
   },
   "scripts": {
     "dev": "NODE_ENV=development node_modules/.bin/nodemon -q -I --exec node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env src/index.tsx",
