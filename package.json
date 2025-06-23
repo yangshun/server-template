@@ -1,15 +1,29 @@
 {
   "name": "@nkzw/server-template",
   "version": "0.0.1",
-  "author": "Christoph Nakazawa <christoph.pojer@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git://github.com/nkzw-tech/server-template.git"
   },
+  "author": "Christoph Nakazawa <christoph.pojer@gmail.com>",
   "type": "module",
-  "engines": {
-    "node": ">=23.0.0",
-    "pnpm": ">=10.0.0"
+  "scripts": {
+    "dev": "NODE_ENV=development node_modules/.bin/nodemon -q -I --exec node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env src/index.tsx",
+    "dev:setup": "pnpm prisma generate && pnpm generate-graphql",
+    "format": "prettier --write .",
+    "generate-graphql": "node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm ./scripts/generate-graphql.tsx",
+    "preinstall": "command -v git >/dev/null 2>&1 && git config core.hooksPath git-hooks || exit 0",
+    "lint": "eslint --cache .",
+    "lint:format": "prettier --cache --check .",
+    "test": "npm-run-all --parallel tsc:check vitest:run lint lint:format",
+    "tsc:check": "tsc",
+    "vitest:run": "vitest run"
+  },
+  "nodemonConfig": {
+    "ext": "tsx",
+    "watch": [
+      "src/"
+    ]
   },
   "dependencies": {
     "@graphql-tools/utils": "^10.8.6",
@@ -39,29 +53,16 @@
     "nodemon": "^3.1.10",
     "npm-run-all2": "^8.0.4",
     "prettier": "4.0.0-alpha.12",
+    "prettier-plugin-packagejson": "^2.5.15",
     "prisma": "^6.10.1",
     "prisma-json-types-generator": "^3.4.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
-  "scripts": {
-    "dev": "NODE_ENV=development node_modules/.bin/nodemon -q -I --exec node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env src/index.tsx",
-    "format": "prettier --write .",
-    "dev:setup": "pnpm prisma generate && pnpm generate-graphql",
-    "generate-graphql": "node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm ./scripts/generate-graphql.tsx",
-    "lint:format": "prettier --cache --check .",
-    "lint": "eslint --cache .",
-    "preinstall": "command -v git >/dev/null 2>&1 && git config core.hooksPath git-hooks || exit 0",
-    "test": "npm-run-all --parallel tsc:check vitest:run lint lint:format",
-    "tsc:check": "tsc",
-    "vitest:run": "vitest run"
-  },
-  "nodemonConfig": {
-    "ext": "tsx",
-    "watch": [
-      "src/"
-    ]
+  "engines": {
+    "node": ">=23.0.0",
+    "pnpm": ">=10.0.0"
   },
   "prisma": {
     "schema": "./src/prisma/schema.prisma",
