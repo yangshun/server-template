@@ -32,7 +32,7 @@
     "@nkzw/define-env": "^1.1.0",
     "@pothos/core": "^4.7.0",
     "@pothos/plugin-complexity": "^4.1.2",
-    "@pothos/plugin-directives": "^4.2.2",
+    "@pothos/plugin-directives": "^4.2.3",
     "@pothos/plugin-prisma": "^4.9.1",
     "@pothos/plugin-relay": "^4.5.0",
     "@pothos/plugin-scope-auth": "^4.1.5",
