@@ -16,6 +16,8 @@ This is a template for a Node.js GraphQL server using Prisma and Pothos includin
 - [Better Auth](https://better-auth.com/) for Authentication.
 - [pnpm](https://pnpm.io/)
 
+Check out the [`nkzw-tech/expo-app-template`](https://github.com/nkzw-tech/expo-app-template/tree/with-relay) for a React Native template with the Relay GraphQL client, or the [`nkzw-tech/web-app-template`](https://github.com/nkzw-tech/web-app-template/tree/with-relay) for building web apps.
+
 ## Setup
 
 You'll need Node.js 23+ and pnpm 10+ to use this template.
