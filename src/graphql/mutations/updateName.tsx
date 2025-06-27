@@ -14,7 +14,7 @@ builder.mutationField('updateName', (t) =>
       name = name.trim();
 
       if (name.length < 2 || name.length > 32) {
-        throw new Error('invalid-display-name');
+        throw new Error('invalid-name');
       }
 
       await auth.api.updateUser({ body: { name } });
