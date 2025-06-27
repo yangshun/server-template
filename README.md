@@ -256,7 +256,7 @@ The sample data in this repository is insecure demo data. Before deploying a ser
 
 ## Building a client
 
-This template is designed to be used with [Relay](https://relay.dev/) as the client. Relay is a mature choice for a GraphQL client for TypeScript apps. The CORS policy expects the client to run at `http://localhost:3000` during development. If you are using a different port, change the `DEVELOPMENT_DOMAIN` in `.env`.
+This template is designed to be used with [Relay](https://relay.dev/) as the client. Relay is a mature choice for a GraphQL client for TypeScript apps. The CORS policy expects the client to run at `http://localhost:5173` during development. If you are using a different port, change the `DEVELOPMENT_DOMAIN` in `.env`.
 
 ## Why does this template use `.tsx` as a file extension?
 
