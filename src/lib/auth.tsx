@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { admin, username } from 'better-auth/plugins';
 import prisma from '../prisma/prisma.tsx';
+import env from './env.tsx';
 
 export const auth = betterAuth({
   advanced: {
@@ -25,4 +26,5 @@ export const auth = betterAuth({
       maxAge: 15 * 24 * 60 * 60,
     },
   },
+  trustedOrigins: [env('CLIENT_DOMAIN')],
 });
