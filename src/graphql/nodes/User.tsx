@@ -43,7 +43,7 @@ builder.queryFields((t) => ({
       name: t.arg.string({ required: true }),
     },
     authScopes: {
-      role: 'User',
+      role: 'user',
     },
     cursor: 'id',
     resolve: (query, _, { name }) => {
@@ -77,7 +77,7 @@ builder.queryFields((t) => ({
   user: t.prismaField({
     args: { username: t.arg.string({ required: true }) },
     authScopes: {
-      role: 'User',
+      role: 'user',
     },
     resolve: (query, _, { username }) =>
       prisma.user.findUnique({

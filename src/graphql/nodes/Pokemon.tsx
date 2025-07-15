@@ -15,7 +15,7 @@ builder.queryFields((t) => ({
   pokemon: t.prismaField({
     args: { id: t.arg.id({ required: true }) },
     authScopes: {
-      role: 'User',
+      role: 'user',
     },
     resolve: (query, _, { id }) =>
       prisma.pokemon.findUnique({

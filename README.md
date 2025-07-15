@@ -132,7 +132,7 @@ builder.queryFields((t) => ({
   user: t.prismaField({
     args: { username: t.arg.string({ required: true }) },
     authScopes: {
-      role: 'User',
+      role: 'user',
     },
     resolve: (query, _, { username }) =>
       prisma.user.findUnique({
@@ -190,7 +190,7 @@ Pothos Nodes are expected to be added in `src/graphql/nodes` and Mutations in `s
 This template supports two auth scopes to control the access to fields in the GraphQL schema:
 
 - `self` accepts a user ID and will grant access if the id matches the currently authenticated user (`viewer`).
-- `role: "User"` or `role: "Admin"` makes the field accessible only to users with the specified role. The `role` matches the `Role` enum in the prisma schema. You can add your own roles in the Prisma schema and use them here.
+- `role: "user"` or `role: "admin"` makes the field accessible only to users with the specified role. The `role` matches the `Role` enum in the prisma schema. You can add your own roles in the Prisma schema and use them here.
 
 ### JSON Types in the Database
 

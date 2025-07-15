@@ -8,7 +8,7 @@ builder.mutationField('updateName', (t) =>
       name: t.arg.string({ required: true }),
     },
     authScopes: {
-      role: 'User',
+      role: 'user',
     },
     resolve: async (query, _, { name }, { sessionUser }) => {
       name = name.trim();
