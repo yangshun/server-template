@@ -26,6 +26,7 @@ const User = builder.prismaNode('User', {
     name: t.exposeString('name', { nullable: false }),
     role: t.exposeString('role', {
       authScopes: (user) => ({ self: user.id }),
+      nullable: false,
     }),
     username: t.exposeString('username'),
   }),
