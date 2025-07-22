@@ -11,6 +11,10 @@ builder.mutationField('updateName', (t) =>
       role: 'user',
     },
     resolve: async (query, _, { name }, { sessionUser }) => {
+      if (!sessionUser) {
+        throw new Error('not-authenticated');
+      }
+
       name = name.trim();
 
       if (name.length < 2 || name.length > 32) {
