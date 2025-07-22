@@ -57,10 +57,10 @@ const builder = new SchemaBuilder<PothosTypes>({
     nodesQueryOptions: false,
   },
   scopeAuth: {
-    authScopes: (context) => ({
+    authScopes: ({ sessionUser }) => ({
       role: (role) =>
-        role === context.sessionUser.role || isAdmin(context.sessionUser),
-      self: (id) => id === context.sessionUser.id,
+        sessionUser && (role === sessionUser.role || isAdmin(sessionUser)),
+      self: (id) => sessionUser && id === sessionUser.id,
     }),
   },
 });
