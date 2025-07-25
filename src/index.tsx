@@ -5,11 +5,12 @@ import parseInteger from '@nkzw/core/parseInteger.js';
 import { createYoga } from 'graphql-yoga';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { Context } from './graphql/context.tsx';
 import schema from './graphql/schema.tsx';
 import { auth } from './lib/auth.tsx';
 import env from './lib/env.tsx';
 import prisma from './prisma/prisma.tsx';
-import { SessionUser, toSessionUser } from './user/SessionUser.tsx';
+import { toSessionUser } from './user/SessionUser.tsx';
 
 try {
   await prisma.$connect();
@@ -48,11 +49,7 @@ app.use(
 
 app.on(['POST', 'GET'], '/api/auth/*', ({ req }) => auth.handler(req.raw));
 
-const yoga = createYoga<
-  Readonly<{
-    sessionUser: SessionUser | null;
-  }>
->({
+const yoga = createYoga<Context>({
   graphiql: process.env.NODE_ENV === 'development',
   schema,
 });
