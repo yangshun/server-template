@@ -2,9 +2,10 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider      = "prisma-client"
-  binaryTargets = ["native", "linux-musl"]
-  output        = "./prisma-client"
+  binaryTargets       = ["native", "linux-musl"]
+  importFileExtension = "ts"
+  output              = "./prisma-client"
+  provider            = "prisma-client"
 }
 
 generator pothos {
