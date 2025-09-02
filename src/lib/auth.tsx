@@ -26,5 +26,6 @@ export const auth = betterAuth({
       maxAge: 15 * 24 * 60 * 60,
     },
   },
+  telemetry: { enabled: false },
   trustedOrigins: [env('CLIENT_DOMAIN')],
 });
