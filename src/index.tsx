@@ -55,23 +55,12 @@ const yoga = createYoga<Context>({
 });
 
 app.on(['POST', 'GET', 'OPTIONS'], '/graphql/*', async (context) => {
-  let req = context.req.raw;
-  const accept = context.req.header('accept');
+  const req = context.req.raw;
   const user = (
     await auth.api.getSession({
       headers: req.headers,
     })
   )?.user;
-
-  if (
-    accept &&
-    !accept.includes('application/json') &&
-    accept.includes('text/event-stream')
-  ) {
-    if (context.req.path === '/graphql' || context.req.path === '/graphql/') {
-      req = new Request(req.url.replace('/graphql', '/graphql/stream'), req);
-    }
-  }
 
   return yoga.handleRequest(req, {
     sessionUser: user ? toSessionUser(user) : null,
