@@ -49,6 +49,7 @@
     "@prettier/plugin-oxc": "^0.0.4",
     "@swc/core": "^1.13.5",
     "@types/node": "^24.5.2",
+    "dotenv": "^17.2.2",
     "eslint": "^9.36.0",
     "glob": "^11.0.3",
     "nodemon": "^3.1.10",
@@ -64,9 +65,5 @@
   "engines": {
     "node": ">=24.0.0",
     "pnpm": ">=10.0.0"
-  },
-  "prisma": {
-    "schema": "./src/prisma/schema.prisma",
-    "seed": "./src/prisma/seed.tsx"
   }
 }
