@@ -1,7 +1,7 @@
 #!/usr/bin/env NODE_ENV=development node --no-warnings --experimental-specifier-resolution=node --loader ts-node/esm --env-file .env
 import { styleText } from 'node:util';
 import random from '@nkzw/core/random.js';
-import arrayShuffle from 'array-shuffle';
+import { arrayToShuffled } from 'array-shuffle';
 import { auth } from '../lib/auth.tsx';
 import { PrismaClient } from './prisma-client/client.ts';
 
@@ -84,7 +84,7 @@ try {
     const users = await prisma.user.findMany();
 
     for (const user of users) {
-      for (const poke of arrayShuffle(pokemon).slice(0, 10)) {
+      for (const poke of arrayToShuffled(pokemon).slice(0, 10)) {
         await prisma.caughtPokemon.create({
           data: {
             nickname: poke.name,
